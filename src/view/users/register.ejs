@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <%- include('../partial/head') %>
+
+</head>
+<body>
+<div class="container-fluid position-relative d-flex p-0" id="container">
+    <!-- Spinner Start -->
+    <div id="spinner"
+         class="show bg-dark position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+
+    <!-- Sign Up Start -->
+    <div class="container-fluid">
+        <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
+            <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+                <div class="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <a href="/" class="">
+                            <%- include('../partial/logo') %>
+                        </a>
+                        <h3>Sign Up</h3>
+                    </div>
+                    <form action="">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="validationServer01"
+                                   placeholder="f" name="username">
+                            <label for="validationServer01">Username</label>
+                            <div id="validationServer01Feedback" class="invalid-feedback">
+                                Username is in use
+                            </div>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="validationServer02" placeholder="name@example.com">
+                            <label for="validationServer02">Email address</label>
+                            <div id="validationServer02Feedback" class="invalid-feedback">
+                                Username is in use
+                            </div>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <input type="password" name="password" class="form-control" id="validationServer03"
+                                   placeholder="Password">
+                            <label for="validationServer03">Password</label>
+                            <div id="validationServer03Feedback" class="invalid-feedback">
+                                Username is in use
+                            </div>
+                        </div>
+                    </form>
+                    <button type="submit" class="btn btn-primary py-3 w-100 mb-4" onclick="submitRegisteringForm()">Sign
+                        Up
+                    </button>
+                    <p class="text-center mb-0">Already have an Account? <a href="/users/login">Sign In</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="notification"></div>
+<!--    <div class="alert alert-primary alert-dismissible fade show notification" role="alert" id="failed-register"-->
+<!--         hidden="">-->
+<!--        <i class="fa fa-exclamation-circle me-2"></i>Register unsuccessfully-->
+<!--        <button type="button" class="btn-close" aria-label="Close"-->
+<!--                onclick="$('#failed-register').alert('close')"></button>-->
+<!--    </div>-->
+<!--    <div class="alert alert-success alert-dismissible fade show notification" role="alert" id="success-register"-->
+<!--         hidden="">-->
+<!--        <i class="fa fa-exclamation-circle me-2"></i>Register successfully, please <a href="/users/login">Log In</a>-->
+<!--        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>-->
+<!--    </div>-->
+    <!-- Sign Up End -->
+</div>
+
+<%- include('../partial/javascript') %>
+<script>
+    let usernameInput = document.getElementById("validationServer01");
+    usernameInput.addEventListener("input", function () {
+        let formData = new FormData();
+        formData.append(`username`, usernameInput.value)
+        const plainFormData = Object.fromEntries(formData.entries());
+        const formDataJsonString = JSON.stringify(plainFormData);
+        console.log("formDataJsonString:", formDataJsonString);
+        const searchRequest = new Request("/users/check-valid-username", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: formDataJsonString
+        });
+        fetch(searchRequest)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("received data:", data);
+                if (data) {
+                    usernameInput.classList.remove("is-invalid");
+                    usernameInput.classList.add("is-valid");
+                } else {
+                    usernameInput.classList.remove("is-valid");
+                    usernameInput.classList.add("is-invalid");
+                    document.getElementById("validationServer01Feedback").innerHTML = "Username is used"
+                }
+            })
+            .catch(console.error);
+    })
+
+    let passwordInput = document.getElementById("validationServer03");
+    passwordInput.addEventListener("input", function () {
+        let formData = new FormData();
+        formData.append(`password`, passwordInput.value)
+        const plainFormData = Object.fromEntries(formData.entries());
+        const formDataJsonString = JSON.stringify(plainFormData);
+        console.log("formDataJsonString:", formDataJsonString);
+        const searchRequest = new Request("/users/check-valid-password", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: formDataJsonString
+        });
+        fetch(searchRequest)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("received data:", data);
+                if (data) {
+                    passwordInput.classList.remove("is-invalid");
+                    passwordInput.classList.add("is-valid");
+                } else {
+                    passwordInput.classList.remove("is-valid");
+                    passwordInput.classList.add("is-invalid");
+                    document.getElementById("validationServer03Feedback").innerHTML = "password must have 8-20 character, a-z A-Z 0-9 special-character(!@#$%^&*) are allowed, must include one of each type";
+                }
+            })
+            .catch(console.error);
+    })
+
+    function submitRegisteringForm() {
+        let formData = new FormData();
+        formData.append(`username`, usernameInput.value)
+        formData.append(`password`, passwordInput.value)
+        const plainFormData = Object.fromEntries(formData.entries());
+        console.log(plainFormData)
+        const formDataJsonString = JSON.stringify(plainFormData);
+        console.log("formDataJsonString:", formDataJsonString);
+        const searchRequest = new Request("/users/register", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: formDataJsonString
+        });
+        fetch(searchRequest)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("received data:", data);
+                if (data) {
+                    // alert("Register successfully");
+                    document.getElementById("notification").innerHTML = `
+                        <div class="alert alert-success alert-dismissible fade show notification" role="alert" id="success-register"
+         hidden="">
+        <i class="fa fa-exclamation-circle me-2"></i>Register successfully, please <a href="/users/login">Log In</a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+                    `;
+                    document.getElementById("success-register").removeAttribute("hidden");
+                    $('#success-register').alert();
+                    usernameInput.classList.remove("is-valid");
+                    passwordInput.classList.remove("is-valid");
+                    console.log(usernameInput, passwordInput);
+                } else {
+                    // alert("Register unsuccessfully");
+                    document.getElementById("notification").innerHTML = `
+                        <div class="alert alert-primary alert-dismissible fade show notification" role="alert" id="failed-register" hidden="">
+        <i class="fa fa-exclamation-circle me-2"></i>Register unsuccessfully
+        <button type="button" class="btn-close" aria-label="Close" onclick="$('#failed-register').alert('close')"></button>
+    </div>
+                    `;
+                    document.getElementById("failed-register").removeAttribute("hidden");
+                    $('#failed-register').alert();
+                }
+
+            })
+            .catch(console.error);
+    }
+
+</script>
+</body>
+</html>

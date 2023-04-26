@@ -1,0 +1,322 @@
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+<script src="/lib/chart/chart.min.js"></script>
+<script src="/lib/easing/easing.min.js"></script>
+<script src="/lib/waypoints/waypoints.min.js"></script>
+<script src="/lib/owlcarousel/owl.carousel.min.js"></script>
+<script src="/lib/tempusdominus/js/moment.min.js"></script>
+<script src="/lib/tempusdominus/js/moment-timezone.min.js"></script>
+<script src="/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+<!-- Template Javascript -->
+<script src="/js/main.js"></script>
+<script>
+    let audio = document.getElementById("audio-tag");
+    let art = document.getElementById("album-art");
+    if (audio) {
+        audio.onplay = function () {
+            console.log("is playing");
+            art.classList.add("rotate");
+        }
+
+        audio.addEventListener("pause", function () {
+            console.log("is paused")
+            art.classList.remove("rotate");
+        })
+
+        audio.onpause = currentTimeSave;
+
+        window.onload = onloadTasks;
+    }
+
+    let source = document.getElementById('audioSource');
+    let currentSongInfo = document.getElementById("current-song-info");
+
+    function onloadTasks() {
+        checkCookieOnLoad();
+        let playlistID = parseInt(window.location.toString().split("/").at(-1));
+        if (!isNaN(playlistID)) {
+            likeCheckPlaylist(playlistID);
+        }
+
+        checkSongsLike()
+    }
+
+    async function checkValidUserID() {
+        let userID = parseInt(getCookie("userID"));
+        const userValidityCheck = new Request("http://127.0.0.1:1000/user-check", {
+            method: "POST",
+            body: `user-id=${userID}`,
+        });
+        let valid
+        await fetch(userValidityCheck)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                if (data) {
+                } else {
+                    signOut();
+                }
+                valid = data;
+            })
+            .catch(console.error);
+        return valid;
+    }
+
+    async function checkSongsLike() {
+        let likeButtons = document.getElementsByClassName("song-like-button");
+        console.log(likeButtons.length)
+        let valid = await checkValidUserID();
+        for (let i = 0; i < likeButtons.length; i++) {
+            let currentButton = likeButtons[i];
+            if (valid) {
+                await likeCheckSong(parseInt(currentButton.value), currentButton)
+            } else {
+                currentButton.parentElement.remove();
+                i--;
+            }
+        }
+        if (!valid) {
+            document.getElementById("like-thead").remove();
+        }
+    }
+
+    function setCookie(cname, cvalue, exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        let expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+        let name = cname + "=";
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+    function checkCookieOnLoad() {
+        let songURL = getCookie("song_url");
+        if (songURL !== "") {
+            source.src = songURL;
+            // currentSongInfo.innerHTML = getCookie("songTitle");
+            audio.load(); //call this to just preload the audio without playing
+            if (getCookie("currentTime") !== "") {
+                audio.currentTime = parseInt(getCookie("currentTime"));
+            }
+            audio.play(); //call this to play the song right away
+        }
+
+
+    }
+
+    function setCookieCurrentSong() {
+        setCookie("song_url", source.src, 365);
+        setCookie("currentTime", audio.currentTime, 365);
+        // setCookie("songTitle", currentSongInfo.innerHTML, 365);
+    }
+
+    window.onbeforeunload = () => {
+        setCookieCurrentSong();
+    }
+
+    function playSong(songObj) {
+        source.src = songObj.songURL;
+
+        // currentSongInfo.innerHTML = songObj.songTitle;
+
+        audio.currentTime = 0;
+        audio.load();
+        audio.play();
+        setCookieCurrentSong();
+    }
+
+    function playThisSongOnly(songID) {
+        let formData = new FormData();
+        formData.append(`song-id`, songID)
+        const plainFormData = Object.fromEntries(formData.entries());
+        const formDataJsonString = JSON.stringify(plainFormData);
+        const getSongURL = new Request(`/get-song-url`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: formDataJsonString,
+        });
+        fetch(getSongURL)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                setCookie("songID", songID, 365);
+                setCookie("isPlaylistPlaying", false, 365);
+                playSong(data)
+            })
+            .catch(console.error);
+    }
+
+    function playThisSongID(songID) {
+        const getSongURL = new Request("http://127.0.0.1:1000/get-song-url", {
+            method: "POST",
+            body: `song-id=${songID}&current=${audio.currentTime}`,
+        });
+        fetch(getSongURL)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                setCookie("songID", songID, 365);
+                playSong(data);
+            })
+            .catch(console.error);
+    }
+
+    function signOut() {
+        setCookie("userID", "", 0);
+    }
+
+    function playThisPlaylist(event, playlistID) {
+        console.log(event);
+        event.stopPropagation();
+        const getSongIDsInPlaylist = new Request("http://127.0.0.1:1000/get-song-ids", {
+            method: "POST",
+            body: `playlist-id=${playlistID}`,
+        });
+        fetch(getSongIDsInPlaylist)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                setCookie("songIDsList", JSON.stringify(data), 365);
+                setCookie("isPlaylistPlaying", true, 365);
+                playThisSongID(data[0]);
+            })
+            .catch(console.error);
+    }
+
+    function goToPlaylist(playlistID) {
+        console.log("trying to redirect")
+        window.location = `/playlist/${playlistID}`
+    }
+
+
+
+    function currentTimeSave() {
+        console.log(audio.currentTime, audio.duration)
+        if (audio.currentTime === audio.duration) {
+            if (getCookie("isPlaylistPlaying") === "true") {
+                let songIDsArr = JSON.parse(getCookie("songIDsList"));
+                let currentPlaylistPos = songIDsArr.indexOf(parseInt(getCookie("songID")));
+                let nextPos = currentPlaylistPos + 1;
+                nextPos = nextPos % songIDsArr.length;
+                let songID = songIDsArr[nextPos];
+                console.log(songID);
+                playThisSongID(songID);
+            }
+        }
+    }
+
+    function playNextSong() {
+
+    }
+
+    const unlikeSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
+  <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"/>
+</svg>`;
+    const likeSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+</svg>`;
+
+    function likeCheckPlaylist(playlistID) {
+        const getPlaylistLikeState = new Request("http://127.0.0.1:1000/check-playlist-like", {
+            method: "POST",
+            body: `playlist-id=${playlistID}`,
+        });
+        fetch(getPlaylistLikeState)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("liked state:", data);
+                let likedButton = document.getElementById("playlist-like-button");
+                console.log(likedButton);
+                if (likedButton !== undefined) {
+                    if (getCookie("userID") === "") {
+                        likedButton.remove();
+                    } else {
+                        if (data) {
+                            likedButton.innerHTML = likeSVG;
+                        } else {
+                            likedButton.innerHTML = unlikeSVG;
+                        }
+                        likedButton.classList.remove("active");
+                    }
+                }
+            })
+            .catch(console.error);
+    }
+
+    function playlistLikeButtonClicked() {
+        let playlistID = parseInt(window.location.toString().split("/").at(-1));
+        const playlistLikeClicked = new Request("http://127.0.0.1:1000/playlist-like", {
+            method: "POST",
+            body: `playlist-id=${playlistID}`,
+        });
+        fetch(playlistLikeClicked)
+            // .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                likeCheckPlaylist(playlistID);
+            })
+            .catch(console.error);
+    }
+
+    function likeCheckSong(songID, buttonElement) {
+        const getSonglistLikeState = new Request("http://127.0.0.1:1000/check-song-like", {
+            method: "POST",
+            body: `song-id=${songID}`,
+        });
+        fetch(getSonglistLikeState)
+            .then((response) => response.json())
+            .then((data) => {
+                // console.log(songID,"liked state:", data);
+                if (data) {
+                    buttonElement.innerHTML = likeSVG;
+                } else {
+                    buttonElement.innerHTML = unlikeSVG;
+                }
+            })
+            .catch(console.error);
+    }
+
+    function songLikeButtonClicked(songID, buttonElement) {
+        const songLikeClicked = new Request("http://127.0.0.1:1000/song-like", {
+            method: "POST",
+            body: `song-id=${songID}`,
+        });
+        fetch(songLikeClicked)
+            // .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+                likeCheckSong(songID, buttonElement);
+            })
+            .catch(console.error);
+    }
+
+    document.addEventListener("click", function (e) {
+        console.log(e.target);
+    })
+
+    function deleteConfirm(songID) {
+        let valid = confirm("Are you sure?");
+        console.log("confirm", valid);
+        if (valid === true) {
+            document.getElementById(`delete-song-${songID}`).submit();
+        }
+    }
+</script>
