@@ -26,7 +26,8 @@
 <!-- Google Web Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap"
+      rel="stylesheet">
 
 <!-- Icon Font Stylesheet -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -54,6 +55,10 @@
         transform: translateX(-50%);
         z-index: 999;
     }
+
+    .nav-item {
+        cursor: pointer;
+    }
 </style>
 
 <style>
@@ -63,12 +68,14 @@
         left: 27%;
         height: 70%;
     }
+
     audio {
         position: absolute;
         left: 20%;
         width: 75%;
         height: 100%;
     }
+
     .song-info-button {
         position: absolute;
         left: 90%;
@@ -78,6 +85,7 @@
     .song-info {
         width: 800%;
     }
+
     audio::-webkit-media-controls-panel {
         background-color: #ed2b2b;
     }
@@ -106,46 +114,51 @@
         transform: scale(1);
         transition: all .5s ease;
 
-    &::after {
-         content: '';
-         position: absolute;
-         top: 50%;
-         left: 50%;
-         width: 15px;
-         height: 15px;
-         background-color: #fff;
-         border-radius: 50%;
-         z-index: 5;
-         transform: translate(-50%, -50%);
-         -webkit-transform: translate(-50%, -50%);
-     }
-
-    &::before {
-         content: '';
-         position: absolute;
-         top: 0;
-         left: 0;
-         right: 0;
-         bottom: 0;
-         border-radius: 50%;
-         background-position: center;
-         background-repeat: no-repeat;
-         background-size: 80px;
-         background-image: 	url('https://img.freepik.com/premium-vector/red-retro-vinyl-disk-isolated-white_184787-326.jpg');
-     }
+    &
+    ::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 15px;
+        height: 15px;
+        background-color: #fff;
+        border-radius: 50%;
+        z-index: 5;
+        transform: translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
     }
 
-    &.active .album-art {
-         box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.2);
-         transform: scale(1.2);
-         transition: all .5s ease;
-     }
+    &
+    ::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 50%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 80px;
+        background-image: url('https://img.freepik.com/premium-vector/red-retro-vinyl-disk-isolated-white_184787-326.jpg');
+    }
 
-    &.active .album-art::before {
-         animation: rotation 3s infinite linear;
-         -webkit-animation: rotation 3s infinite linear;
-         animation-fill-mode: forwards;
-     }
+    }
+
+    &
+    .active .album-art {
+        box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.2);
+        transform: scale(1.2);
+        transition: all .5s ease;
+    }
+
+    &
+    .active .album-art::before {
+        animation: rotation 3s infinite linear;
+        -webkit-animation: rotation 3s infinite linear;
+        animation-fill-mode: forwards;
+    }
 
     @keyframes rotation {
         0% {
@@ -157,3 +170,662 @@
         }
     }
 </style>
+
+<style>
+    .card {
+        background: #fff;
+        transition: .5s;
+        border: 0;
+        margin-bottom: 30px;
+        border-radius: .55rem;
+        position: relative;
+        width: 100%;
+        box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
+    }
+
+    .chat-app .people-list {
+        width: 280px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        padding: 20px;
+        z-index: 7
+    }
+
+    .chat-app .chat {
+        margin-left: 280px;
+        border-left: 1px solid #eaeaea
+    }
+
+    .people-list {
+        -moz-transition: .5s;
+        -o-transition: .5s;
+        -webkit-transition: .5s;
+        transition: .5s
+    }
+
+    .people-list .chat-list li {
+        padding: 10px 15px;
+        list-style: none;
+        border-radius: 3px
+    }
+
+    .people-list .chat-list li:hover {
+        background: #efefef;
+        cursor: pointer
+    }
+
+    .people-list .chat-list li.active {
+        background: #efefef
+    }
+
+    .people-list .chat-list li .name {
+        font-size: 15px
+    }
+
+    .people-list .chat-list img {
+        width: 45px;
+        border-radius: 50%
+    }
+
+    .people-list img {
+        float: left;
+        border-radius: 50%
+    }
+
+    .people-list .about {
+        float: left;
+        padding-left: 8px
+    }
+
+    .people-list .status {
+        color: #999;
+        font-size: 13px
+    }
+
+    .chat .chat-header {
+        padding: 15px 20px;
+        border-bottom: 2px solid #f4f7f6
+    }
+
+    .chat .chat-header img {
+        float: left;
+        border-radius: 40px;
+        width: 40px
+    }
+
+    .chat .chat-header .chat-about {
+        float: left;
+        padding-left: 10px
+    }
+
+    .chat .chat-history {
+        padding: 20px;
+        border-bottom: 2px solid #fff
+    }
+
+    .chat .chat-history ul {
+        padding: 0
+    }
+
+    .chat .chat-history ul li {
+        list-style: none;
+        margin-bottom: 30px
+    }
+
+    .chat .chat-history ul li:last-child {
+        margin-bottom: 0px
+    }
+
+    .chat .chat-history .message-data {
+        margin-bottom: 15px
+    }
+
+    .chat .chat-history .message-data img {
+        border-radius: 40px;
+        width: 40px
+    }
+
+    .chat .chat-history .message-data-time {
+        color: #434651;
+        padding-left: 6px
+    }
+
+    .chat .chat-history .message {
+        color: #444;
+        padding: 18px 20px;
+        line-height: 26px;
+        font-size: 16px;
+        border-radius: 7px;
+        display: inline-block;
+        position: relative
+    }
+
+    .chat .chat-history .message:after {
+        bottom: 100%;
+        left: 7%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-bottom-color: #fff;
+        border-width: 10px;
+        margin-left: -10px
+    }
+
+    .chat .chat-history .my-message {
+        background: #efefef
+    }
+
+    .chat .chat-history .my-message:after {
+        bottom: 100%;
+        left: 30px;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+        border-bottom-color: #efefef;
+        border-width: 10px;
+        margin-left: -10px
+    }
+
+    .chat .chat-history .other-message {
+        background: #e8f1f3;
+        text-align: right
+    }
+
+    .chat .chat-history .other-message:after {
+        border-bottom-color: #e8f1f3;
+        left: 93%
+    }
+
+    .chat .chat-message {
+        padding: 20px
+    }
+
+    .online,
+    .offline,
+    .me {
+        margin-right: 2px;
+        font-size: 8px;
+        vertical-align: middle
+    }
+
+    .online {
+        color: #86c541
+    }
+
+    .offline {
+        color: #e47297
+    }
+
+    .me {
+        color: #1d8ecd
+    }
+
+    .float-right {
+        float: right
+    }
+
+    .clearfix:after {
+        visibility: hidden;
+        display: block;
+        font-size: 0;
+        content: " ";
+        clear: both;
+        height: 0
+    }
+
+    @media only screen and (max-width: 767px) {
+        .chat-app .people-list {
+            height: 465px;
+            width: 100%;
+            overflow-x: auto;
+            background: #fff;
+            left: -400px;
+            display: none
+        }
+
+        .chat-app .people-list.open {
+            left: 0
+        }
+
+        .chat-app .chat {
+            margin: 0
+        }
+
+        .chat-app .chat .chat-header {
+            border-radius: 0.55rem 0.55rem 0 0
+        }
+
+        .chat-app .chat-history {
+            height: 300px;
+            overflow-x: auto
+        }
+    }
+
+    @media only screen and (min-width: 768px) and (max-width: 992px) {
+        .chat-app .chat-list {
+            height: 650px;
+            overflow-x: auto
+        }
+
+        .chat-app .chat-history {
+            height: 600px;
+            overflow-x: auto
+        }
+    }
+
+    @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 1) {
+        .chat-app .chat-list {
+            height: 480px;
+            overflow-x: auto
+        }
+
+        .chat-app .chat-history {
+            height: calc(100vh - 350px);
+            overflow-x: auto
+        }
+    }
+</style>
+
+<style>
+    /*<!--    for playlist creation-->*/
+    #playlist-cover {
+        /*position: absolute;*/
+        /*left: 83%;*/
+        right: 2.5rem;
+        top: 2.5rem;
+        width: 12%;
+        z-index: 999;
+    }
+
+    #playlist-cover img {
+        width: 100%;
+        aspect-ratio: 1/1;
+        object-fit: contain;
+    }
+</style>
+<style>
+    /*for playlist detail*/
+    @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+
+    .album-info {
+        width: 95%;
+        min-height: 40px;
+        margin: 0 2% 0;
+    }
+
+    :root {
+        --white-dark: #fefcfc;
+        --white-light: #ffffff;
+        --dark: #1e1e1e;
+        --green: #00d19b;
+    }
+
+    .main {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .left-content {
+        flex: 1;
+        display: flex;
+        width: 100%;
+        max-width: 30%;
+        padding: 1rem;
+        margin-right: 2rem;
+        flex-direction: column;
+    }
+
+    .big-img {
+        position: relative;
+    }
+
+    .big-img > img {
+        width: 100%;
+        max-width: 500px;
+        aspect-ratio: 1/1;
+        position: relative;
+    }
+
+    .right-content {
+        flex: 1;
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        font-size: 0.9rem;
+        padding: 1rem;
+    }
+
+    .right-content > h2 {
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .product-tagline {
+        font-weight: 600;
+    }
+
+    .product-desc {
+        font-weight: 500;
+        line-height: 1.5rem;
+    }
+
+    .stars {
+        color: var(--green);
+    }
+
+    .rating {
+        color: var(--green);
+    }
+
+    a {
+        color: var(--dark);
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+    }
+
+    p {
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 1200px) {
+        .container {
+            width: 90%;
+        }
+
+        .product-desc {
+            font-weight: 500;
+            line-height: 1rem;
+        }
+
+        .left-content {
+            flex: 1;
+            margin-right: 0;
+        }
+
+        .right-content {
+            flex: 1;
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            font-size: 0.9rem;
+            padding: 0;
+            padding-left: 1rem;
+        }
+    }
+
+</style>
+
+<style>
+    /*header .song_side {*/
+    /*    width: 100%;*/
+    /*}*/
+    .popular_song {
+        width: 100%;
+        height: auto;
+        /* border: 1px solid #fff; */
+        margin: auto;
+        margin-top: 15px;
+    }
+
+    .popular_song .h4 {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .popular_song .h4 .bi {
+        color: #a4a8b4;
+        cursor: pointer;
+        transition: .3s linear;
+    }
+
+    .popular_song .h4 .bi:hover {
+        color: #fff;
+    }
+
+    .pop_song {
+        width: 100%;
+        height: 280px;
+        margin-top: 15px;
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+    }
+
+    .pop_song::-webkit-scrollbar {
+        display: none;
+    }
+
+    .pop_song li {
+        min-width: 200px;
+        height: 280px;
+        list-style-type: none;
+        /*margin-right: 10px;*/
+        transition: .3s linear;
+    }
+
+    .pop_song li:hover {
+        background: rgb(105, 105, 170, .1);
+    }
+
+    .pop_song li .img_play {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .pop_song li .img_play img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .pop_song li .img_play .bi {
+        position: absolute;
+        font-size: 50px;
+        cursor: pointer;
+        transition: .3s linear;
+        opacity: 0;
+    }
+
+    .pop_song li .img_play:hover .bi {
+        opacity: 1;
+    }
+
+    .pop_song li h5 {
+        padding: 10px 0px 0px 10px;
+        line-height: 15px;
+        font-size: 20px;
+    }
+
+    .pop_song li h5 .subtitle {
+        padding: 10px 0 0 0;
+        font-size: 18px;
+        color: #4c5262;
+    }
+
+</style>
+
+<style>
+    .your_playlist {
+        width: 100%;
+        height: clamp(40vh, 60%, 80vh);
+        /* border: 1px solid #fff; */
+        margin: auto;
+        margin-top: 15px;
+    }
+
+    .your_playlist .h4 {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .your_playlist .h4 .bi {
+        color: #a4a8b4;
+        cursor: pointer;
+        transition: .3s linear;
+    }
+
+    .your_playlist .h4 .bi:hover {
+        color: #fff;
+    }
+
+    .all_playlist {
+        width: 100%;
+        height: 90%;
+        margin-top: 15px;
+        display: grid;
+        justify-content: space-between;
+        grid-template-columns: repeat(auto-fill, 200px);
+        grid-gap: 10px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+    }
+
+    .all_playlist::-webkit-scrollbar {
+        display: none;
+    }
+
+    .all_playlist li {
+        /*min-width: 200px;*/
+        height: 280px;
+        list-style-type: none;
+        /*margin-right: 10px;*/
+        transition: .3s linear;
+    }
+
+    .all_playlist li:hover {
+        background: rgb(105, 105, 170, .1);
+    }
+
+    .all_playlist li .img_play {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .all_playlist li .img_play img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .all_playlist li .img_play .bi {
+        position: absolute;
+        font-size: 50px;
+        cursor: pointer;
+        transition: .3s linear;
+        opacity: 0;
+        color: #EB1616;
+    }
+
+    .all_playlist li .img_play:hover .bi {
+        opacity: 1;
+    }
+
+    .all_playlist li h5 {
+        padding: 10px 0px 0px 10px;
+        line-height: 15px;
+        font-size: 20px;
+    }
+
+    .all_playlist li h5 .subtitle {
+        padding: 10px 0 0 0;
+        font-size: 18px;
+        color: #4c5262;
+    }
+</style>
+
+<!--<style>-->
+<!--    header .song_side .popular_song {-->
+<!--        width: 100%;-->
+<!--        height: auto;-->
+<!--        /* border: 1px solid #fff; */-->
+<!--        margin: auto;-->
+<!--        margin-top: 15px;-->
+<!--    }-->
+<!--    header .song_side .popular_song .h4{-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        justify-content: space-between;-->
+<!--    }-->
+<!--    header .song_side .popular_song .h4 .bi{-->
+<!--        color: #a4a8b4;-->
+<!--        cursor: pointer;-->
+<!--        transition: .3s linear;-->
+<!--    }-->
+<!--    header .song_side .popular_song .h4 .bi:hover{-->
+<!--        color: #fff;-->
+<!--    }-->
+
+<!--    header .song_side .popular_song .pop_song {-->
+<!--        width: 100%;-->
+<!--        height: 250px;-->
+<!--        margin-top: 15px;-->
+<!--        display: flex;-->
+<!--        flex-flow: row wrap;-->
+<!--        justify-content: space-between;-->
+<!--        overflow-x: auto;-->
+<!--        scroll-behavior: smooth;-->
+<!--    }-->
+<!--    header .song_side .popular_song .pop_song::-webkit-scrollbar{-->
+<!--        display: none;-->
+<!--    }-->
+<!--    header .song_side .popular_song .pop_song li{-->
+<!--        min-width: 200px;-->
+<!--        height: 280px;-->
+<!--        list-style-type: none;-->
+<!--        margin-right: 10px;-->
+<!--        transition: .3s linear;-->
+<!--    }-->
+<!--    header .song_side .popular_song .pop_song li:hover{-->
+<!--        background: rgb(105, 105, 170,.1);-->
+<!--    }-->
+<!--    header .song_side .popular_song .pop_song li .img_play{-->
+<!--        position: relative;-->
+<!--        width: 200px;-->
+<!--        height: 200px;-->
+<!--        display: flex;-->
+<!--        align-items: center;-->
+<!--        justify-content: center;-->
+<!--    }-->
+<!--    header .song_side .popular_song .pop_song li .img_play img{-->
+<!--        width: 100%;-->
+<!--        height: 100%;-->
+<!--    }-->
+<!--    header .song_side .popular_song .pop_song li .img_play .bi{-->
+<!--        position: absolute;-->
+<!--        font-size: 50px;-->
+<!--        cursor: pointer;-->
+<!--        transition: .3s linear;-->
+<!--        opacity: 0;-->
+<!--    }-->
+<!--    header .song_side .popular_song .pop_song li .img_play:hover .bi{-->
+<!--        opacity: 1;-->
+<!--    }-->
+<!--    header .song_side .popular_song .pop_song li h5{-->
+<!--        padding: 10px 0px 0px 10px;-->
+<!--        line-height: 15px;-->
+<!--        font-size: 20px;-->
+<!--    }-->
+<!--    header .song_side .popular_song .pop_song li h5 .subtitle{-->
+<!--        padding: 10px 0 0 0;-->
+<!--        font-size: 18px;-->
+<!--        color: #4c5262;-->
+<!--    }-->
+<!--</style>-->

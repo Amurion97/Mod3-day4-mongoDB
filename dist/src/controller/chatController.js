@@ -3,21 +3,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const CategoryService_1 = __importDefault(require("../service/CategoryService"));
 const songService_1 = __importDefault(require("../service/songService"));
-class SongController {
+class ChatController {
     constructor() {
         this.findAll = async (req, res) => {
-            console.log("All songs accessed");
-            res.render('index', { isLogged: req.session["isLogged"] });
+            console.log("Chat accessed");
+            res.render('chat/chat', {
+                isLogged: req.session["isLogged"]
+            });
         };
         this.findAllYours = async (req, res) => {
             console.log("Your songs accessed by userID:", req.session['UID']);
             let userID = req.session['UID'];
-            res.render('index', { isLogged: req.session["isLogged"] });
+            res.render('songs/yourSongList', { songListName: "Your songs", isLogged: req.session["isLogged"] });
         };
-        this.showCreateForm = async (req, res) => {
+        this.showFormAdd = async (req, res) => {
             console.log("Create songs accessed by userID:", req.session['UID']);
-            res.render('index', { isLogged: req.session["isLogged"] });
+            res.render('songs/create', { isLogged: req.session["isLogged"] });
         };
         this.addSong = (req, res) => {
             if (req.session['UID']) {
@@ -48,7 +51,8 @@ class SongController {
             }
         };
         this.songService = songService_1.default;
+        this.categoryService = CategoryService_1.default;
     }
 }
-exports.default = new SongController();
-//# sourceMappingURL=songController.js.map
+exports.default = new ChatController();
+//# sourceMappingURL=chatController.js.map

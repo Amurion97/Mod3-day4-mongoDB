@@ -33,101 +33,86 @@
         contentType: 'audio/mp3'
     };
 
-    function uploadAudio(e) {
-        // let uploader = document.getElementById('uploader');
-        let file = e.target.files[0];
-
-        // Upload file and metadata to the object 'images/mountains.jpg'
-        const storageRef = ref(storage, 'audios/' + file.name);
-        const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-        document.getElementById("progress-bar").hidden = false;
-
-        // Listen for state changes, errors, and completion of the upload.
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log('Upload is ' + progress + '% done');
-                let progressBar = document.getElementById("upload-progress");
-                progressBar.style.width = Math.round(progress) + "%";
-                progressBar.innerHTML = Math.round(progress) + "%";
-                switch (snapshot.state) {
-                    case 'paused':
-                        console.log('Upload is paused');
-                        break;
-                    case 'running':
-                        console.log('Upload is running');
-                        break;
-                }
-            },
-            (error) => {
-                // A full list of error codes is available at
-                // https://firebase.google.com/docs/storage/web/handle-errors
-                switch (error.code) {
-                    case 'storage/unauthorized':
-                        // User doesn't have permission to access the object
-                        break;
-                    case 'storage/canceled':
-                        // User canceled the upload
-                        break;
-
-                    // ...
-
-                    case 'storage/unknown':
-                        // Unknown error occurred, inspect error.serverResponse
-                        break;
-                }
-            },
-            () => {
-                // Upload completed successfully, now we can get the download URL
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    console.log('File available at', downloadURL);
-                    // alert("Upload complete");
-
-                    document.getElementById("notification").innerHTML = `
-                        <div class="alert alert-success alert-dismissible fade show notification" role="alert" id="success-register"
-         hidden="">
-        <i class="fa fa-exclamation-circle me-2"></i>Upload successfully!
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-                    `;
-                    document.getElementById("success-register").removeAttribute("hidden");
-                    $('#success-register').alert();
-
-                    document.getElementById("song-url").value = downloadURL;
-                    if (document.getElementById("song-title").value === "") {
-                        document.getElementById("song-title").value = file.name.split(".").at(-2);
-                    }
-                    setTimeout(()=> {
-                        document.getElementById("upload-button").disabled = false;
-                    }, 500)
-                });
-            }
-        );
-    }
-
-    window.uploadAudio = uploadAudio;
-
+    // function uploadAudio(e) {
+    //     // let uploader = document.getElementById('uploader');
+    //     let file = e.target.files[0];
+    //
+    //     // Upload file and metadata to the object 'images/mountains.jpg'
+    //     const storageRef = ref(storage, 'audios/' + file.name);
+    //     const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+    //     document.getElementById("progress-bar").hidden = false;
+    //
+    //     // Listen for state changes, errors, and completion of the upload.
+    //     uploadTask.on('state_changed',
+    //         (snapshot) => {
+    //             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+    //             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    //             console.log('Upload is ' + progress + '% done');
+    //             let progressBar = document.getElementById("upload-progress");
+    //             progressBar.style.width = Math.round(progress) + "%";
+    //             progressBar.innerHTML = Math.round(progress) + "%";
+    //             switch (snapshot.state) {
+    //                 case 'paused':
+    //                     console.log('Upload is paused');
+    //                     break;
+    //                 case 'running':
+    //                     console.log('Upload is running');
+    //                     break;
+    //             }
+    //         },
+    //         (error) => {
+    //             // A full list of error codes is available at
+    //             // https://firebase.google.com/docs/storage/web/handle-errors
+    //             switch (error.code) {
+    //                 case 'storage/unauthorized':
+    //                     // User doesn't have permission to access the object
+    //                     break;
+    //                 case 'storage/canceled':
+    //                     // User canceled the upload
+    //                     break;
+    //
+    //                 // ...
+    //
+    //                 case 'storage/unknown':
+    //                     // Unknown error occurred, inspect error.serverResponse
+    //                     break;
+    //             }
+    //         },
+    //         () => {
+    //             // Upload completed successfully, now we can get the download URL
+    //             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+    //                 console.log('File available at', downloadURL);
+    //                 // alert("Upload complete");
+    //
+    //                 document.getElementById("notification").innerHTML = `
+    //                     <div class="alert alert-success alert-dismissible fade show notification" role="alert" id="success-register"
+    //      hidden="">
+    //     <i class="fa fa-exclamation-circle me-2"></i>Upload successfully!
+    //     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    // </div>
+    //                 `;
+    //                 document.getElementById("success-register").removeAttribute("hidden");
+    //                 $('#success-register').alert();
+    //
+    //                 document.getElementById("song-url").value = downloadURL;
+    //                 if (document.getElementById("song-title").value === "") {
+    //                     document.getElementById("song-title").value = file.name.split(".").at(-2);
+    //                 }
+    //                 setTimeout(()=> {
+    //                     document.getElementById("upload-button").disabled = false;
+    //                 }, 500)
+    //             });
+    //         }
+    //     );
+    // }
+    // window.uploadAudio = uploadAudio;
 </script>
 <script>
     let artistSuggestionList = [];
     let artistNameInput = document.getElementById("artist-name-input");
     let artistIDList = document.getElementById("artist-id-list");
     artistNameInput.addEventListener("input", function () {
-        let formData = new FormData();
-        formData.append(`artist-name`,artistNameInput.value)
-        const plainFormData = Object.fromEntries(formData.entries());
-        const formDataJsonString = JSON.stringify(plainFormData);
-        console.log("formDataJsonString:", formDataJsonString);
-        console.log("sending search request", `artist-name=${artistNameInput.value}`)
-        const searchRequest = new Request("http://127.0.0.1:1400/search-artist-name", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: formDataJsonString
-        });
-        fetch(searchRequest)
+        fetch(`http://127.0.0.1:1800/artists?name=${artistNameInput.value}`)
             .then((response) => response.json())
             .then((data) => {
                 artistSuggestionList = data;
@@ -145,10 +130,6 @@
         let a, b, i, val = inp.value;
         /*close any already open lists of autocompleted values*/
         closeAllLists(inp);
-        // if the input is blank then do nothing
-        // if (!val) {
-        //     return false;
-        // }
         /*create a DIV element that wil l contain the items (values):*/
         a = document.createElement("DIV");
         a.setAttribute("id", inp.id + "autocomplete-list");
@@ -160,7 +141,7 @@
         for (i = 0; i < arr.length; i++) {
             /*check if the item starts with the same letters as the text field value:*/
             // if (arr[i].title.slice(0, val.length).toUpperCase() === val.toUpperCase()) {
-            let artistName = arr[i].artistName;
+            let artistName = arr[i].name;
             let startIndex = artistName.toUpperCase().indexOf(val.toUpperCase());
             if (artistName.toUpperCase().includes(val.toUpperCase())) {
                 /*create a DIV element for each matching element:*/
@@ -205,16 +186,12 @@
     addArtistButton.addEventListener("click", async function () {
         let gotArtist = await getArtistID();
         console.log("gotArtist:", gotArtist)
-        // let toAddArtistID = document.getElementById("chosen-artist-id").value;
-        let toAddArtistID = gotArtist._id;
+        let toAddArtistID = gotArtist.id;
         let artistName = document.getElementById("artist-name-input").value;
-        // if (!isNaN(toAddArtistID))
-
         let artistIDArr = [];
         if (artistIDList.value !== "") {
             artistIDArr = JSON.parse(artistIDList.value);
         }
-        // console.log("current Artist Arr:", artistIDArr);
         if (artistIDArr.indexOf(toAddArtistID) < 0) {
             artistIDArr.push(toAddArtistID);
             artistIDList.value = JSON.stringify(artistIDArr);
@@ -229,33 +206,15 @@
                     </span>
                 </button>
             `;
-            // let a = document.createElement("button");
-            // a.setAttribute("class", "btn btn-primary mx-2");
-            // a.setAttribute("onclick", "removeArtist(this.value)");
-            // a.setAttribute("value", `${toAddArtistID}`);
-            // a.setAttribute("id", `${toAddArtistID}`);
-            // a.innerHTML = artistName;
             document.getElementById("artist-name-input").value = "";
             document.getElementById("chosen-artist-id").value = "";
-            // artistShowDiv.appendChild(a);
             artistShowDiv.innerHTML += b;
         }
     });
 
     async function getArtistID() {
-        let formData = new FormData();
-        formData.append(`artist-name`, artistNameInput.value)
-        const plainFormData = Object.fromEntries(formData.entries());
-        const formDataJsonString = JSON.stringify(plainFormData);
-        console.log("formDataJsonString:", formDataJsonString);
-        console.log("sending get artistID request", `artist-name=${artistNameInput.value}`)
-        const getIDRequest = new Request("http://127.0.0.1:1400/get-artist-name", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: formDataJsonString
-        });
         let gotArtist;
-        await fetch(getIDRequest)
+        await fetch(`http://127.0.0.1:1800/artists/get-by-name?name=${artistNameInput.value}`)
             .then((response) => response.json())
             .then((data) => {
                 console.log("received data:", data);
@@ -275,8 +234,51 @@
     }
 
     function submitForm() {
+        console.log(document.getElementById("upload-button").getAttribute("disabled"));
+        // if (document.getElementById("upload-button").)
         let uploadForm = document.getElementById("upload-form");
-        console.log(uploadForm);
-        console.log(new FormData(uploadForm))
+        let formData = new FormData(uploadForm);
+        formData.append("sid", getCookie("sid"));
+        const plainFormData = Object.fromEntries(formData.entries());
+        console.log(plainFormData)
+        const formDataJsonString = JSON.stringify(plainFormData);
+        console.log("formDataJsonString:", formDataJsonString);
+        const uploadRequest = new Request("http://127.0.0.1:1800/songs", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: formDataJsonString
+        });
+        fetch(uploadRequest)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("received data:", data);
+                if (data.success) {
+                    // alert("Register successfully");
+                    document.getElementById("notification").innerHTML = `
+                        <div class="alert alert-success alert-dismissible fade show notification" role="alert" id="success-register"
+         hidden="">
+        <i class="fa fa-exclamation-circle me-2"></i>Song is successfully create, check here <a href="/songs/your-songs">Your Songs</a>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+                    `;
+                    document.getElementById("success-register").removeAttribute("hidden");
+                    $('#success-register').alert();
+
+                    uploadForm.reset();
+                    console.log(new FormData(uploadForm).entries())
+                } else {
+                    // alert("Register unsuccessfully");
+                    document.getElementById("notification").innerHTML = `
+                        <div class="alert alert-primary alert-dismissible fade show notification" role="alert" id="failed-register" hidden="">
+        <i class="fa fa-exclamation-circle me-2"></i>Register unsuccessfully
+        <button type="button" class="btn-close" aria-label="Close" onclick="$('#failed-register').alert('close')"></button>
+    </div>
+                    `;
+                    document.getElementById("failed-register").removeAttribute("hidden");
+                    $('#failed-register').alert();
+                }
+
+            })
+            .catch(console.error);
     }
 </script>

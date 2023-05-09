@@ -30,7 +30,7 @@
                     <form action="">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="validationServer01"
-                                   placeholder="f" name="username">
+                                   placeholder="f" name="username" autocomplete="off">
                             <label for="validationServer01">Username</label>
                             <div id="validationServer01Feedback" class="invalid-feedback">
                                 Username is in use
@@ -79,27 +79,30 @@
 <script>
     let usernameInput = document.getElementById("validationServer01");
     usernameInput.addEventListener("input", function () {
-        let formData = new FormData();
-        formData.append(`username`, usernameInput.value)
-        const plainFormData = Object.fromEntries(formData.entries());
-        const formDataJsonString = JSON.stringify(plainFormData);
-        console.log("formDataJsonString:", formDataJsonString);
-        const searchRequest = new Request("/users/check-valid-username", {
+        // let formData = new FormData();
+        // formData.append(`username`, usernameInput.value)
+        // const plainFormData = Object.fromEntries(formData.entries());
+        // const formDataJsonString = JSON.stringify(plainFormData);
+        // console.log("formDataJsonString:", formDataJsonString);
+        const searchRequest = new Request(`${BE_SERVER_PORT}/users/check-valid-username`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: formDataJsonString
+            // body: formDataJsonString
+            body: JSON.stringify({
+                username: usernameInput.value
+            })
         });
         fetch(searchRequest)
             .then((response) => response.json())
             .then((data) => {
                 console.log("received data:", data);
-                if (data) {
+                if (data.success) {
                     usernameInput.classList.remove("is-invalid");
                     usernameInput.classList.add("is-valid");
                 } else {
                     usernameInput.classList.remove("is-valid");
                     usernameInput.classList.add("is-invalid");
-                    document.getElementById("validationServer01Feedback").innerHTML = "Username is used"
+                    document.getElementById("validationServer01Feedback").innerHTML = data.message
                 }
             })
             .catch(console.error);
@@ -107,27 +110,31 @@
 
     let passwordInput = document.getElementById("validationServer03");
     passwordInput.addEventListener("input", function () {
-        let formData = new FormData();
-        formData.append(`password`, passwordInput.value)
-        const plainFormData = Object.fromEntries(formData.entries());
-        const formDataJsonString = JSON.stringify(plainFormData);
-        console.log("formDataJsonString:", formDataJsonString);
-        const searchRequest = new Request("/users/check-valid-password", {
+        // let formData = new FormData();
+        // formData.append(`password`, passwordInput.value)
+        // const plainFormData = Object.fromEntries(formData.entries());
+        // const formDataJsonString = JSON.stringify(plainFormData);
+        // console.log("formDataJsonString:", formDataJsonString);
+        const searchRequest = new Request(`${BE_SERVER_PORT}/users/check-valid-password`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: formDataJsonString
+            // body: formDataJsonString
+            body: JSON.stringify({
+                password: passwordInput.value
+            })
         });
+
         fetch(searchRequest)
             .then((response) => response.json())
             .then((data) => {
                 console.log("received data:", data);
-                if (data) {
+                if (data.success) {
                     passwordInput.classList.remove("is-invalid");
                     passwordInput.classList.add("is-valid");
                 } else {
                     passwordInput.classList.remove("is-valid");
                     passwordInput.classList.add("is-invalid");
-                    document.getElementById("validationServer03Feedback").innerHTML = "password must have 8-20 character, a-z A-Z 0-9 special-character(!@#$%^&*) are allowed, must include one of each type";
+                    document.getElementById("validationServer03Feedback").innerHTML = data.message;
                 }
             })
             .catch(console.error);
@@ -141,7 +148,7 @@
         console.log(plainFormData)
         const formDataJsonString = JSON.stringify(plainFormData);
         console.log("formDataJsonString:", formDataJsonString);
-        const searchRequest = new Request("/users/register", {
+        const searchRequest = new Request(`${BE_SERVER_PORT}/users`, {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: formDataJsonString

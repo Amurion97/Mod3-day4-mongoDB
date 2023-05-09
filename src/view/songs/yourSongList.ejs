@@ -119,16 +119,7 @@
                                 <th scope="col" onclick="window.location ='/top-50-played-song'">Times Played</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <% songList.forEach((item, index) => { %>
-                                <tr>
-                                    <th scope="row"><%= ++index %></th>
-                                    <td></td>
-                                    <td><%= item.songTitle %></td>
-                                    <td><%= item.artist.map(item => item.artistName).join(", ") %></td>
-                                    <td></td>
-                                </tr>
-                            <% }) %>
+                            <tbody id="tbody">
                             </tbody>
                         </table>
                     </div>
@@ -148,7 +139,26 @@
     <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
 </div>
 <%- include('../partial/javascript') %>
-<%- include('upload-song-script') %>
+
+<script>
+    window.onload = async function () {
+        let tbody = document.getElementById("tbody");
+        const response = await fetch(`http://127.0.0.1:1800/songs/your-song/${getCookie("sid")}`);
+        const songList = await response.json();
+        console.log(songList);
+        songList.forEach((item, index) => {
+            console.log(index, item)
+            tbody.innerHTML +=
+        `<tr>
+            <th scope="row">${++index}</th>
+            <td></td>
+            <td>${item.songTitle}</td>
+            <td>${item.artists.map(item => item.name).join(", ")}</td>
+            <td></td>
+        </tr>`
+        })
+    }
+</script>
 </body>
 
 </html>

@@ -1,4 +1,4 @@
-import {Request, Response} from "express";
+import {NextFunction, Request, Response} from "express";
 import artistService from "../service/artistService";
 
 class ArtistController {
@@ -27,6 +27,18 @@ class ArtistController {
         } else {
             res.send(JSON.stringify(await artistService.addArtist(artistName)));
         }
+    }
+
+    getAvatar = async (request: Request, response: Response, next: NextFunction) => {
+        console.log("artist avatar:", request.params.name)
+        // await fetch(`https://serpapi.com/search.json?q=${request.params.name}&engine=google_images&ijn=0`)
+        // await fetch(`https://www.google.com/search?q=${request.params.name}`)
+        //     .then(data => data.json())
+        //     .then(json => {
+        //         // console.log(json)
+        //         response.json(json)
+        //     })
+        response.end()
     }
 }
 

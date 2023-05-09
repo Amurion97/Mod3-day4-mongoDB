@@ -8,7 +8,7 @@ const songService_1 = __importDefault(require("../service/songService"));
 class BrowseController {
     constructor() {
         this.showBrowse = async (req, res) => {
-            res.render('index', { isLogged: req.session["isLogged"] });
+            res.render('index');
         };
         this.songService = songService_1.default;
         this.categoryService = CategoryService_1.default;

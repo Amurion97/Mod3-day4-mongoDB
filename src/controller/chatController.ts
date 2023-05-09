@@ -2,24 +2,21 @@ import {Request, Response} from "express";
 import categoryService from "../service/CategoryService";
 import songService from "../service/songService";
 
-class SongController {
+class ChatController {
     private songService;
+    private categoryService;
 
     constructor() {
         this.songService = songService;
+        this.categoryService = categoryService;
     }
 
     findAll = async (req: Request, res: Response) => {
-        console.log("All songs accessed")
-        // let songList = await this.songService.getAll();
-        // console.log("listProduct:", songList)
-        // res.render('songs/songList', {
-        //     songListName: "All songs",
-        //     // songList: songList,
-        //     isLogged: req.session["isLogged"]
-        // });
+        console.log("Chat accessed")
 
-        res.render('index', {isLogged: req.session["isLogged"]});
+        res.render('chat/chat', {
+            isLogged: req.session["isLogged"]
+        });
     }
 
     findAllYours = async (req: Request, res: Response) => {
@@ -29,16 +26,18 @@ class SongController {
         // let songList = await this.songService.getByOwner(userID);
         // console.log("your song list:", songList)
         // res.render('songs/yourSongList', {songListName: "Your songs", songList: songList, isLogged: req.session["isLogged"]});
-        // res.render('songs/yourSongList', {songListName: "Your songs", isLogged: req.session["isLogged"]});
-
-        res.render('index', {isLogged: req.session["isLogged"]});
+        res.render('songs/yourSongList', {songListName: "Your songs", isLogged: req.session["isLogged"]});
     }
 
-    showCreateForm = async (req: Request, res: Response) => {
+    showFormAdd = async (req: Request, res: Response) => {
+        // if (req.session['user']) {
         console.log("Create songs accessed by userID:", req.session['UID'])
-        // res.render('songs/create', {isLogged: req.session["isLogged"]});
-
-        res.render('index', {isLogged: req.session["isLogged"]});
+        res.render('songs/create', {isLogged: req.session["isLogged"]});
+        // res.render('index',{isLogged: req.session["isLogged"]});
+        // } else {
+        //     console.log("Create song rejected");
+        //     res.redirect(301, '/users/login');
+        // }
     }
 
     addSong = (req: Request, res: Response) => {
@@ -71,4 +70,4 @@ class SongController {
     }
 }
 
-export default new SongController();
+export default new ChatController();

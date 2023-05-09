@@ -16,7 +16,8 @@ class BrowseController {
         // if (req.session['user']) {
         //     isLogged = true;
         // }
-        res.render('index', {isLogged: req.session["isLogged"]});
+        // res.render('index', {isLogged: req.session["isLogged"]});
+        res.render('index');
     }
 
 }

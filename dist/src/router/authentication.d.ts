@@ -1,2 +1,3 @@
-export declare function isLogged(req: any, res: any, next: any): void;
-export declare function loggingRedirect(req: any, res: any, next: any): void;
+import { Request } from "express";
+export declare function isLogged(req: Request, res: any, next: any): Promise<void>;
+export declare function loggingRedirect(req: any, res: any, next: any): Promise<void>;

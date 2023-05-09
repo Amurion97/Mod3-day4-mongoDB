@@ -23,6 +23,10 @@ class ArtistController {
                 res.send(JSON.stringify(await artistService_1.default.addArtist(artistName)));
             }
         };
+        this.getAvatar = async (request, response, next) => {
+            console.log("artist avatar:", request.params.name);
+            response.end();
+        };
         this.artistService = artistService_1.default;
     }
 }
